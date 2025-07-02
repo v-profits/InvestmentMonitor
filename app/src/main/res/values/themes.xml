@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Тема приложения -->
+<!--    <style name="Theme.InvestmentMonitor" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
+<!--    <style name="Theme.InvestmentMonitor" parent="Theme.MaterialComponents.Light.NoActionBar">-->
+    <style name="Theme.InvestmentMonitor" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Переопределите цвет фона, если необходимо -->
+        <item name="android:windowBackground">@color/window</item>
+        <item name="android:windowIsTranslucent">true</item>
+
+        <!-- Цвет статус-бара (верхнего бара) -->
+        <item name="android:statusBarColor">@color/window</item>
+        <!-- Цветовой акцент кнопки навигации (это который нижний прочерк) (для API 21+) -->
+        <item name="android:navigationBarColor">@color/window</item>
+
+        <!-- Это делает шрифт черным -->
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- стиль для ввода заголовка в итемах -->
+        <item name="colorControlNormal">@color/black_blue</item>
+    </style>
+
+
+    <!--стиль для шрифта-->
+    <style name="MyFontStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <!--стиль для шрифта-->
+    <style name="MyFontStyleBold" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+
+
+</resources>
+

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+
+<!--    цвета для флагов компаний-->
+    <color name="flag1">#FF6E3C</color>
+    <color name="flag2">#FFAB00</color>
+    <color name="flag3">#00C853</color>
+    <color name="flag4">#3CD2FF</color>
+    <color name="flag5">#3C6EFF</color>
+    <color name="flag6">#D23CFF</color>
+
+    <!--    цвета для цены итемов-->
+    <color name="color1">#D84315</color>
+    <color name="color2">#98999E</color>
+    <color name="color3">#43A047</color>
+
+    <!--    цвета для цены итемов-->
+    <color name="color1_">#FF3C00</color>
+    <color name="color3_">#16C51D</color>
+
+
+
+
+
+    <color name="zero">#00FFFFFF</color>
+
+
+
+    <color name="black">#000000</color>
+    <color name="black_blue">#2C3D57</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#737373</color>
+    <color name="green">#009F88</color>
+    <color name="red">#F13F3F</color>
+    <color name="ticker">#454C63</color>
+    <color name="price">#4E556E</color>
+    <color name="line_item">#F4EFEF</color>
+    <color name="window">#FFFFFF</color>
+<!--    <color name="menu_default">#9D9393</color>-->
+    <color name="icon_menu_default">#85807E</color>
+    <color name="icon_menu_tap">#2F6FA8</color>
+    <color name="icon_fragment">#85807E</color>
+    <color name="title_fragment">#85807E</color>
+    <color name="edit_title">#31000000</color>
+    <color name="fon_title">#2FCCC5C5</color>
+
+</resources>

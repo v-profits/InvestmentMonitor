@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/window">
+
+    <!-- Поле для данных портфеля -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <!-- Поле для фильтрации -->
+        <EditText
+            android:id="@+id/etFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:visibility="gone"
+
+            android:hint="Фильтр по имени актива"
+            android:padding="8dp" />
+
+        <!-- Кнопки добавить, очистить -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:padding="0dp">
+
+            <Button
+                android:id="@+id/btnImport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Импортир... данные"
+                android:layout_margin="0dp" />
+
+            <Button
+                android:id="@+id/btnClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Очистить данные"
+                android:layout_margin="0dp" />
+
+        </LinearLayout>
+
+        <!-- Кнопки сортировки -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+            android:visibility="gone"
+
+            android:gravity="center_horizontal"
+            android:padding="0dp">
+
+            <Button
+                android:id="@+id/btnSortByProfit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:text="Сортир... по прибыли" />
+
+            <Button
+                android:id="@+id/btnSortByName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:text="Сортир... по имени" />
+        </LinearLayout>
+
+        <!-- Портфель общие данные -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/tvAllCase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:text="0.0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="0dp">
+
+                <TextView
+                    android:id="@+id/tvAllDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:text="0.0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:text="   за  " />
+
+                <TextView
+                    android:id="@+id/tvIsDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:background="@color/fon_title"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="день" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <!--переопределения поведения RecyclerView, чтобы RecyclerView динамически подстраивал свой-->
+            <!--размер под количество элементов, по умолчанию RecyclerView оптимизирован для прокрутки-->
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+<!--                    Поле для акций-->
+                    <LinearLayout
+                        android:id="@+id/llStock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#6F5454"
+                        android:padding="8dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Акции:"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                android:textColor="#FF6D00"
+                                android:paddingStart="16dp" />
+
+                            <TextView
+                                android:id="@+id/percentStock"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingStart="16dp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/imageViewStock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:padding="2dp"
+                            app:srcCompat="@drawable/outline_keyboard_arrow_up_24" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+                            <TextView
+                                android:id="@+id/allStock"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end"/>
+
+                            <TextView
+                                android:id="@+id/profitStock"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:background="@color/line_item" />
+
+                    <!-- RecyclerView для акций -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewStocks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+<!--                    Поле для облигаций -->
+                    <LinearLayout
+                        android:id="@+id/llBond"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#6F5454"
+                        android:padding="8dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Облигации:"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                android:textColor="#FF6D00"
+                                android:paddingStart="16dp" />
+
+                            <TextView
+                                android:id="@+id/percentBond"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingStart="16dp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/imageViewBond"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:padding="2dp"
+                            app:srcCompat="@drawable/outline_keyboard_arrow_up_24" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+                            <TextView
+                                android:id="@+id/allBond"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end"/>
+
+                            <TextView
+                                android:id="@+id/profitBond"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:background="@color/line_item" />
+
+                    <!-- RecyclerView для облигаций -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewBonds"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+<!--                    Поле для фондов-->
+                    <LinearLayout
+                        android:id="@+id/llFund"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#6F5454"
+                        android:padding="8dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Фонды:"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                android:textColor="#FF6D00"
+                                android:paddingStart="16dp" />
+
+                            <TextView
+                                android:id="@+id/percentFund"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingStart="16dp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/imageViewFund"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:padding="2dp"
+                            app:srcCompat="@drawable/outline_keyboard_arrow_up_24" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+                            <TextView
+                                android:id="@+id/allFund"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end"/>
+
+                            <TextView
+                                android:id="@+id/profitFund"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:background="@color/line_item" />
+
+                    <!-- RecyclerView для фондов -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewFunds"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+<!--                    Поле для фьючерсов-->
+                    <LinearLayout
+                        android:id="@+id/llFutures"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#6F5454"
+                        android:padding="8dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- Поле для акций -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Фьючерсы:"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                android:textColor="#FF6D00"
+                                android:paddingStart="16dp" />
+
+                            <TextView
+                                android:id="@+id/percentFutures"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingStart="16dp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/imageViewFutures"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:padding="2dp"
+                            app:srcCompat="@drawable/outline_keyboard_arrow_up_24" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+                            <TextView
+                                android:id="@+id/allFutures"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end"/>
+
+                            <TextView
+                                android:id="@+id/profitFutures"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingEnd="16dp"
+                                android:gravity="end" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:background="@color/line_item" />
+
+                    <!-- RecyclerView для фьючерсов -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewFutures"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+<!--                    Поле для валюты-->
+                    <LinearLayout
+                        android:id="@+id/llCash"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#6F5454"
+                        android:padding="8dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Валюта:"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                android:textColor="#EF6C00"
+                                android:paddingStart="16dp" />
+
+                            <TextView
+                                android:id="@+id/percentFreeCash"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="0.0 ₽"
+                                android:textColor="@color/white"
+                                android:paddingStart="16dp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/imageViewCash"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:padding="2dp"
+                            app:srcCompat="@drawable/outline_keyboard_arrow_up_24" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="end">
+
+<!--                            <TextView-->
+<!--                                android:id="@+id/allFutures"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:textSize="16sp"-->
+<!--                                android:text="0.0 ₽"-->
+<!--                                android:textColor="@color/white"-->
+<!--                                android:paddingEnd="16dp"-->
+<!--                                android:gravity="end"/>-->
+
+<!--                            <TextView-->
+<!--                                android:id="@+id/profitFutures"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:textSize="14sp"-->
+<!--                                android:text="0.0 ₽"-->
+<!--                                android:textColor="@color/white"-->
+<!--                                android:paddingEnd="16dp"-->
+<!--                                android:gravity="end" />-->
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:background="@color/line_item" />
+
+                    <TextView
+                        android:id="@+id/tvFreeCash"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="16sp"
+                        android:padding="8dp" />
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </ScrollView>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

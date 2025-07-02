@@ -1,0 +1,68 @@
+когда в class ViewModel очередь дойдет до  Log.e("aaa","Данные MOEX импортированы") надо будет через
+отслеживание флага (изменения) через ViewModel вызвать в class AdapterStock функцию  fun updateStock
+для заполнения таблиц новыми данными и возможно вызвать в class FragmentCase функцию fun updateCase()
+
+В Kotlin (и в Android-разработке в целом) ViewModel из библиотеки Android Architecture Components используется для управления данными, которые отображаются в пользовательском интерфейсе. Ее основная задача — обеспечить устойчивость данных при изменении конфигурации (например, при повороте экрана).
+
+Основные функции ViewModel:
+Хранение данных:
+
+ViewModel хранит данные, которые нужны для UI, в течение всего жизненного цикла Activity или
+Эти данные сохраняются даже при повторном создании Activity или Fragment (например, при повороте экрана).
+Отделение логики от UI:
+
+Позволяет отделить логику приложения от компонентов интерфейса, таких как Activity или Fragment.
+Это упрощает тестирование и поддержку кода.
+Обработка изменений конфигурации:
+
+При изменении конфигурации ViewModel не уничтожается, а продолжает существовать до тех пор, пока Activity или Fragment полностью не выйдут из памяти.
+Работа с потоками данных:
+
+Часто используется вместе с LiveData, чтобы обновлять UI в ответ на изменения данных.
+Пример использования:
+---
+class MyViewModel : ViewModel() {
+    // Храним данные, которые нужны для UI
+    private val _counter = MutableLiveData<Int>()
+    val counter: LiveData<Int> get() = _counter
+
+    init {
+        _counter.value = 0 // Инициализируем начальное значение
+    }
+
+    // Логика увеличения счетчика
+    fun incrementCounter() {
+        _counter.value = (_counter.value ?: 0) + 1
+    }
+}
+---
+В Activity или Fragment:
+---
+class MyActivity : AppCompatActivity() {
+    private lateinit var viewModel: MyViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Получаем ViewModel
+        viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+
+        // Наблюдаем за изменениями данных
+        viewModel.counter.observe(this) { count ->
+            // Обновляем UI при изменении значения
+            findViewById<TextView>(R.id.textView).text = count.toString()
+        }
+
+        // Устанавливаем обработчик для кнопки
+        findViewById<Button>(R.id.button).setOnClickListener {
+            viewModel.incrementCounter()
+        }
+    }
+}
+---
+Основные преимущества:
+Сохранение данных при изменении конфигурации.
+Упрощение архитектуры приложения.
+Отделение логики от представления (UI).
+Использование ViewModel — это один из ключевых шагов к реализации архитектуры MVVM в Android-приложениях.

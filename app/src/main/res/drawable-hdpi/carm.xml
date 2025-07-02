@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
+    android:viewportWidth="56"
+    android:viewportHeight="56"
+    android:width="56dp"
+    android:height="56dp">
+    <path
+        android:pathData="M0 0H56V56H0V0Z"
+        android:fillColor="#F0F3FA" />
+    <path
+        android:pathData="M16 19C17.6569 19 19 17.6569 19 16C19 14.3431 17.6569 13 16 13C14.3431 13 13 14.3431 13 16C13 17.6569 14.3431 19 16 19Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M28 19C29.6569 19 31 17.6569 31 16C31 14.3431 29.6569 13 28 13C26.3431 13 25 14.3431 25 16C25 17.6569 26.3431 19 28 19Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M40 19C41.6569 19 43 17.6569 43 16C43 14.3431 41.6569 13 40 13C38.3431 13 37 14.3431 37 16C37 17.6569 38.3431 19 40 19Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M16 31C17.6569 31 19 29.6569 19 28C19 26.3431 17.6569 25 16 25C14.3431 25 13 26.3431 13 28C13 29.6569 14.3431 31 16 31Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M16 43C17.6569 43 19 41.6569 19 40C19 38.3431 17.6569 37 16 37C14.3431 37 13 38.3431 13 40C13 41.6569 14.3431 43 16 43Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M28 31C29.6569 31 31 29.6569 31 28C31 26.3431 29.6569 25 28 25C26.3431 25 25 26.3431 25 28C25 29.6569 26.3431 31 28 31Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M28 43C29.6569 43 31 41.6569 31 40C31 38.3431 29.6569 37 28 37C26.3431 37 25 38.3431 25 40C25 41.6569 26.3431 43 28 43Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M40 31C41.6569 31 43 29.6569 43 28C43 26.3431 41.6569 25 40 25C38.3431 25 37 26.3431 37 28C37 29.6569 38.3431 31 40 31Z"
+        android:fillColor="#02309B" />
+    <path
+        android:pathData="M40 43C41.6569 43 43 41.6569 43 40C43 38.3431 41.6569 37 40 37C38.3431 37 37 38.3431 37 40C37 41.6569 38.3431 43 40 43Z"
+        android:fillColor="#02309B" />
+</vector>
