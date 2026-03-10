@@ -1,14 +1,19 @@
 package com.example.investmentmonitor.MOEX
 
+//import androidx.core.content.ContentProviderCompat.requireContext
+//import com.example.investmentmonitor.MOEX.TickerDatabaseHelper
+
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import isFuturesTraded
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Collections
 
-class ViewModel : ViewModel() {
-
+open class ViewModel() : ViewModel() {
     private val _tickers = MutableLiveData<List<TickerResponse>>(emptyList())
     val tickers: LiveData<List<TickerResponse>> get() = _tickers
 
@@ -16,6 +21,9 @@ class ViewModel : ViewModel() {
     private val _stringValue = MutableLiveData<String>()
     val stringValue: LiveData<String>
         get() = _stringValue
+
+    // счетчик для кружочков фьючерсов
+    var count = 0
 
     fun setTitle(value: String) {
         _stringValue.value = value
@@ -106,11 +114,12 @@ class ViewModel : ViewModel() {
                             TickerResponse(
                                 board = it.getOrNull(1) ?: "", // BOARDID
                                 ticker = it.getOrNull(0) ?: "N/A", // SECID
-                                name = it.getOrNull(2) ?: "", // SECNAME
+                                name = it.getOrNull(9) ?: "", // SECNAME
                                 decimals = it.getOrNull(8)?.toString()?.toIntOrNull() ?: 0, // DECIMALS
                                 currentPrice = it.getOrNull(3) ?: "—", // PREVPRICE
                                 lastPrice = rawMarketData.getOrNull(index)?.getOrNull(12) ?: "—", // LAST
-                                simbolBanca = it.getOrNull(16) ?: "" // FACEUNIT
+                                simbolBanca = it.getOrNull(16) ?: "", // FACEUNIT
+                                session = rawMarketData.getOrNull(index)?.getOrNull(54) ?: "—", // TRADINGSESSION "1", "2"
                             )
                         }
                         // фонды
@@ -122,7 +131,8 @@ class ViewModel : ViewModel() {
                                 decimals = it.getOrNull(8)?.toString()?.toIntOrNull() ?: 0, // DECIMALS
                                 currentPrice = it.getOrNull(3) ?: "—", // PREVPRICE
                                 lastPrice = rawMarketData.getOrNull(index)?.getOrNull(12) ?: "—", // LAST
-                                simbolBanca = it.getOrNull(16) ?: "" // FACEUNIT
+                                simbolBanca = it.getOrNull(16) ?: "", // FACEUNIT
+                                session = rawMarketData.getOrNull(index)?.getOrNull(54) ?: "—", // TRADINGSESSION "1", "2"
                             )
                         }
                         // облигации
@@ -136,24 +146,38 @@ class ViewModel : ViewModel() {
                                 lastPrice = rawMarketData.getOrNull(index)?.getOrNull(11) ?: "—", // LAST
                                 simbolBanca =  it.getOrNull(25) ?: "", // FACEUNIT
                                 profit = it.getOrNull(4) ?: "", // YIELDATPREVWAPRICE
-                                period = it.getOrNull(13) ?: "" // MATDATE
+                                period = it.getOrNull(13) ?: "", // MATDATE
+                                session = rawMarketData.getOrNull(index)?.getOrNull(58) ?: "—", // TRADINGSESSION "1", "2"
                             )
                         }
                         // индексы
                         "SNDX", "RTSI", "INAV", "INPF" -> {
+//                            Log.e("aaa", "index: $index")
                             TickerResponse(
                                 board = it.getOrNull(1) ?: "", // BOARDID
                                 ticker = it.getOrNull(0) ?: "N/A", // SECID
                                 name = it.getOrNull(2) ?: "", // NAME
                                 decimals = it.getOrNull(3)?.toString()?.toIntOrNull() ?: 0, // DECIMALS
-//                                currentPrice = rawMarketData.getOrNull(index)?.getOrNull(4) ?: "—", // CURRENTVALUE
-                                currentPrice = rawMarketData.getOrNull(index)?.getOrNull(2) ?: "—", // LASTVALUE
-//                                lastPrice = rawMarketData.getOrNull(index)?.getOrNull(2) ?: "—" // LASTVALUE
                                 lastPrice = rawMarketData.getOrNull(index)?.getOrNull(4) ?: "—", // CURRENTVALUE
-                                simbolBanca = it.getOrNull(7) ?: "" // CURRENCYID
+                                currentPrice = "",
+                                simbolBanca = it.getOrNull(7) ?: "", // CURRENCYID
+                                session = rawMarketData.getOrNull(index)?.getOrNull(25) ?: "—", // TRADINGSESSION "1", "2"
                             )
                         }
                         // фьючерсы
+                        "RFUD" -> {
+                            TickerResponse(
+                                board = it.getOrNull(1) ?: "", // BOARDID
+                                ticker = it.getOrNull(0) ?: "N/A", // SECID
+                                name = it.getOrNull(2) ?: "", // SHORTNAME
+                                decimals = it.getOrNull(5)?.toString()?.toIntOrNull() ?: 0, // DECIMALS
+                                currentPrice = it.getOrNull(19) ?: "—", // PREVPRICE
+                                lastPrice = rawMarketData.getOrNull(index)?.getOrNull(8) ?: "—", // LAST
+                                simbolBanca = "",
+//                                status = rawMarketData.getOrNull(index)?.getOrNull(9) ?: "—", // SECTYPE "AE", "AK"
+                            )
+                        }
+                        // опционы
                         else -> {
                             TickerResponse(
                                 board = it.getOrNull(1) ?: "", // BOARDID
@@ -162,16 +186,100 @@ class ViewModel : ViewModel() {
                                 decimals = it.getOrNull(5)?.toString()?.toIntOrNull() ?: 0, // DECIMALS
                                 currentPrice = it.getOrNull(19) ?: "—", // PREVPRICE
                                 lastPrice = rawMarketData.getOrNull(index)?.getOrNull(8) ?: "—", // LAST
-                                simbolBanca = ""
+                                simbolBanca = "",
+//                                status = rawMarketData.getOrNull(index)?.getOrNull(13) ?: "—", // OPTIONTYPE "P", "C" - 14; UNDERLYINGTYPE "F" - 27
                             )
                         }
                     }
                 }
-                // Обновляем данные
-                _tickers.postValue(tickers)
 
+                // меняем статусы
+                fun sessionAll(ticker: TickerResponse) {
+                    ticker.session = when(ticker.session) { // 🟢 🔴 ⚫ 🔵 ⚪ 🟡 🟣 🟠 🟤
+                        "0" -> "🟠" // 0, "morning", "Утренняя сессия"
+                        "1" -> "🟢" // 1, "main", "Основная сессия"
+                        "2" -> "🔵" // 2, "evening", "Вечерняя сессия"
+                        "3" -> "🔴" // 3, "total", "Итого"
+                        "5" -> "🟡" // 5, "weekend", "Дополнительная сессия выходного дня"
+                        else -> "⚫"
+                    }
+                }
+
+                // меняем статусы фьючерсов
+                fun sessionFutures(ticker: TickerResponse, traded: String?) {
+                    ticker.session = when(traded) { // 🟢 🔴 ⚫ 🔵 ⚪ 🟡 🟣 🟠 🟤
+                        "0" -> "⚫" // 0, "morning", "Утренняя сессия"
+                        "1" -> "🟢" // 1, "main", "Основная сессия"
+                        else -> "⚪"
+                    }
+                }
+
+                // для фьючерсов получаем статус торговой сессии (0,1)
+                if (nameBoard() == "RFUD") { // для фьючерсов
+                    viewModelScope.launch {
+                        try {
+                            for (ticker in tickers) {
+                                val traded = isFuturesTraded(ticker.ticker)
+                                // меняем статусы фьючерсов
+                                sessionFutures(ticker, traded)
+
+//                                Log.e("aaa", "ticker: ${ticker.ticker}, traded: ${traded}, status: ${ticker.status}")
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            // Обработка ошибок (например, показать Toast)
+                        }
+//                        delay(2000) // задержка 2 секунды (не блокирует UI)
+
+                        // Обновляем данные
+                        _tickers.postValue(tickers)
+                    }
+                }
+                // для индексов получаем цену закрытия предыдущей торговой сессии
+                else if (nameBoard() in listOf("SNDX", "RTSI", "INAV", "INPF")) { // для индексов
+                    viewModelScope.launch(Dispatchers.IO) {
+                        try {
+                            for (ticker in tickers) {
+                                val secid = ticker.ticker // например, РТС
+                                // Получаем диапазон доступных дат
+                                val datesResponse = RetrofitClient2.api.getDates(secid)
+                                val dateFrom = datesResponse.dates.data.firstOrNull()?.get(0) ?: return@launch
+                                val dateTill = datesResponse.dates.data.firstOrNull()?.get(1) ?: return@launch
+
+                                // Для примера возьмём dateTill и сделаем запрос
+                                val closeResponse = RetrofitClient2.api.getClosePrice(secid, dateTill, dateTill)
+                                val closePrice = closeResponse.history.data.firstOrNull()?.get(1) as? Double
+
+                                // обновите UI с closePrice
+                                ticker.currentPrice = closePrice.toString()
+
+//                                if (ticker.ticker == "IMOEX2")
+//                                    Log.e("aaa", "ticker: ${ticker.ticker}, currentPrice: ${ticker.currentPrice}, lastPrice: ${ticker.lastPrice}")
+
+                                // меняем статусы
+                                sessionAll(ticker)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            // Обработка ошибок (например, показать Toast)
+                        }
+                        // Обновляем данные
+                        _tickers.postValue(tickers)
+                    }
+                }
+                else { // для всех остальных боардов
+                    // меняем статусы
+                    for (ticker in tickers)
+                        sessionAll(ticker)
+
+                    // Обновляем данные
+                    _tickers.postValue(tickers)
+                }
+
+                // Обновляем данные
+//                _tickers.postValue(tickers)
             } catch (e: Exception) {
-                _tickers.postValue(listOf(TickerResponse("", "N/A", "", 0, "—", "—", "")))
+                _tickers.postValue(listOf(TickerResponse(null, null, "", "N/A", "", 0, "—", "—", "", "")))
             }
         }
     }

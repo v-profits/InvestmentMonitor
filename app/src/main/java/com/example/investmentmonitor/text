@@ -1,68 +1,43 @@
-когда в class ViewModel очередь дойдет до  Log.e("aaa","Данные MOEX импортированы") надо будет через
-отслеживание флага (изменения) через ViewModel вызвать в class AdapterStock функцию  fun updateStock
-для заполнения таблиц новыми данными и возможно вызвать в class FragmentCase функцию fun updateCase()
+🧾 Источники информации
+✅ Официальный источник: MOEX
+Все режимы торгов (BOARDID) и их расшифровки (описания, типы инструментов, правила торгов) публикуются и поддерживаются Московской биржей (MOEX). Достоверные данные можно получить:
 
-В Kotlin (и в Android-разработке в целом) ViewModel из библиотеки Android Architecture Components используется для управления данными, которые отображаются в пользовательском интерфейсе. Ее основная задача — обеспечить устойчивость данных при изменении конфигурации (например, при повороте экрана).
+Из документации MOEX ISS (Information and Statistics Service):
 
-Основные функции ViewModel:
-Хранение данных:
+Официальный сайт API: https://iss.moex.com
 
-ViewModel хранит данные, которые нужны для UI, в течение всего жизненного цикла Activity или
-Эти данные сохраняются даже при повторном создании Activity или Fragment (например, при повороте экрана).
-Отделение логики от UI:
+Документация: https://iss.moex.com/iss/reference/
 
-Позволяет отделить логику приложения от компонентов интерфейса, таких как Activity или Fragment.
-Это упрощает тестирование и поддержку кода.
-Обработка изменений конфигурации:
+Справочники / metadata endpoints, например:
 
-При изменении конфигурации ViewModel не уничтожается, а продолжает существовать до тех пор, пока Activity или Fragment полностью не выйдут из памяти.
-Работа с потоками данных:
+https://iss.moex.com/iss/engines/stock/markets/shares/boards.json – режимы торгов для акций.
 
-Часто используется вместе с LiveData, чтобы обновлять UI в ответ на изменения данных.
-Пример использования:
----
-class MyViewModel : ViewModel() {
-    // Храним данные, которые нужны для UI
-    private val _counter = MutableLiveData<Int>()
-    val counter: LiveData<Int> get() = _counter
+https://iss.moex.com/iss/engines/stock/markets/bonds/boards.json – для облигаций.
 
-    init {
-        _counter.value = 0 // Инициализируем начальное значение
-    }
+https://iss.moex.com/iss/engines/stock/markets/index/boards.json – для индексов и т.п.
 
-    // Логика увеличения счетчика
-    fun incrementCounter() {
-        _counter.value = (_counter.value ?: 0) + 1
-    }
-}
----
-В Activity или Fragment:
----
-class MyActivity : AppCompatActivity() {
-    private lateinit var viewModel: MyViewModel
+Там содержится информация:
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+boardid — код режима торгов (как ты указал)
 
-        // Получаем ViewModel
-        viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+board_title — официальное описание
 
-        // Наблюдаем за изменениями данных
-        viewModel.counter.observe(this) { count ->
-            // Обновляем UI при изменении значения
-            findViewById<TextView>(R.id.textView).text = count.toString()
-        }
+is_traded — торгуется ли в данный момент
 
-        // Устанавливаем обработчик для кнопки
-        findViewById<Button>(R.id.button).setOnClickListener {
-            viewModel.incrementCounter()
-        }
-    }
-}
----
-Основные преимущества:
-Сохранение данных при изменении конфигурации.
-Упрощение архитектуры приложения.
-Отделение логики от представления (UI).
-Использование ViewModel — это один из ключевых шагов к реализации архитектуры MVVM в Android-приложениях.
+engine, market, group и др.
+
+----------------------------------
+
+торговые сессии (для цвета кружочков сессии)
+https://iss.moex.com/iss/history/engines/stock/markets/shares/sessions.json
+https://iss.moex.com/iss/history/engines/stock/markets/futures/sessions.json
+
+торговая сессия для фьючерсов (0, 1)
+https://iss.moex.com/iss/statistics/engines/futures/markets/forts/series.json
+
+предыдущая торговая сессия (для индекса)
+https://iss.moex.com/iss/history/engines/stock/markets/index/securities/IMOEX2/dates.json
+
+цена закрытия предыдущей сессии (для индекса)
+https://iss.moex.com/iss/history/engines/stock/markets/index/securities/IMOEX2.json?from=2025-08-08&till=2025-08-08&history.columns=TRADEDATE,CLOSE
+

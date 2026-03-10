@@ -3,7 +3,7 @@ package com.example.investmentmonitor.MOEX
 var currentPosition: Int? = null // Переменная для хранения позиции выбранного элемента для смены цвета флага компании
 var titleItem: String = "Заголовок" // заголовок в итеме по умолчанию
 
-var isResetTickers = false // не сбросить все изменения
+//var isResetTickers = false // не сбросить все изменения
 var isNewFiles = false // новизна файла брокера
 
 var isSecurities = false
@@ -15,6 +15,7 @@ var isSave = true // дает разрешение на сохранение в 
 
 var nameFragment = "" // для выбора вызова фрагмента
 var tv_title = "" // титл для каждого фрагмента
+var tv_sub_title = "" // титл для каждого фрагмента
 
 var boardList = mutableListOf<String>()
 

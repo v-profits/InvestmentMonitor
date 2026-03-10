@@ -547,7 +547,7 @@ fun DatabaseHelper.logTableContent() {
 //        "Guide" // справочник эмитентов портфеля
     )
     for (tableName in listTableName) {
-        Log.e("aaa","$tableName--------------------------------------------------------------")
+//        Log.e("aaa","$tableName--------------------------------------------------------------")
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $tableName", null)
         if (cursor.moveToFirst()) {

@@ -2,6 +2,7 @@ package com.example.investmentmonitor.MOEX
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,9 +92,7 @@ class FragmentMenu : Fragment() {
 
         fun updateView() {
             if (currentPosition != null) {
-
                 if (backupTicker[currentPosition!!].visibilityTitle) {
-
                     title.visibility = View.GONE
                     panelColor.visibility = View.GONE
                     newHeader.visibility = View.VISIBLE
@@ -103,9 +102,7 @@ class FragmentMenu : Fragment() {
                     marketdata.visibility = View.GONE
                     delete.visibility = View.VISIBLE
                     ticker.visibility = View.GONE
-
                 } else {
-
                     title.visibility = View.VISIBLE
                     panelColor.visibility = View.VISIBLE
                     newHeader.visibility = View.GONE
@@ -159,16 +156,17 @@ class FragmentMenu : Fragment() {
         // клики
         // Установка слушателей кликов
 
-        // Обработка клика по элементу "Добавить раздел выше"
+        // Обработка клика
         newHeader.setOnClickListener {
             removeFragment() // Удаление текущего фрагмента
         }
 
-        // Обработка клика по элементу "Добавить раздел выше"
+        // Обработка клика
         title.setOnClickListener {
             // Создаем новый заголовок
             val newHeader = TickerResponse(
-                board = "",
+                position = -1,
+                board = backupTicker[position].board, // ""
                 ticker = "Title",
                 name = "",
                 decimals = 0,
@@ -187,6 +185,25 @@ class FragmentMenu : Fragment() {
             if (currentPosition != null)
                 backupTicker[currentPosition!!].visibilityTitle = true
 
+            // присваиваем position по порядку позиции index
+            backupTicker.forEachIndexed { index, ticker ->
+                ticker.position = index
+            }
+
+            // Сохранение данных для восстановления в новой сессии
+            val dbHelper = TickerDatabaseHelper(requireContext())
+            backupTicker.forEach { ticker ->
+                dbHelper.upsertTicker(ticker)
+            }
+
+            // присваиваем id по порядку позиции id в базе
+            backupTicker.forEach { ticker ->
+                if (ticker.id == null)
+                    ticker.id = ticker.position?.let { it1 ->
+                        dbHelper.getIdByPosition(ticker.board, ticker.ticker, it1)
+                    }
+            }
+
             // скрываем виджеты
             updateView()
 //            removeFragment() // Удаление текущего фрагмента
@@ -196,6 +213,12 @@ class FragmentMenu : Fragment() {
         delete.setOnClickListener {
             // Удаляем заголовок
             if (currentPosition != null) {
+
+                // удаление по board и ticker
+                val position = currentPosition!!
+                val db = TickerDatabaseHelper(requireContext())
+                db.deleteByBoardAndTicker(backupTicker[position].board, backupTicker[position].titleItem)
+
                 backupTicker.removeAt(currentPosition!!)
                 if (backupTicker.size == currentPosition && currentPosition != 0) {
                     currentPosition = currentPosition!! - 1

@@ -16,28 +16,28 @@
         <TextView
             android:id="@+id/column_name"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             style="@style/MyFontStyleBold"
             android:layout_margin="1dp"
             android:paddingStart="24dp"
             android:maxLines="1"
             android:text="TextView"
-            android:textColor="@color/ticker"
+            android:textColor="@color/edit_title_active"
             android:textSize="16sp" />
+<!--        android:layout_weight="1"-->
 
         <TextView
             android:id="@+id/column_value"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             style="@style/MyFontStyle"
-            android:maxLines="1"
             android:layout_margin="1dp"
             android:paddingStart="24dp"
             android:text="TextView"
             android:textColor="@color/gray"
             android:textSize="14sp" />
+<!--        android:maxLines="1"-->
+<!--        android:layout_weight="1"-->
 
         <TextView
             android:layout_width="match_parent"

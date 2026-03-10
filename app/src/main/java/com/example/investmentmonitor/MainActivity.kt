@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -22,9 +21,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import androidx.lifecycle.ViewModelProvider
-import com.example.investmentmonitor.case_sber.CaseAll
-import com.example.investmentmonitor.case_sber.DatabaseHelper
 import com.example.investmentmonitor.MOEX.boardList
 import com.example.investmentmonitor.MOEX.isMarketData
 import com.example.investmentmonitor.MOEX.isSecurities
@@ -32,8 +28,8 @@ import com.example.investmentmonitor.MOEX.nameFragment
 import com.example.investmentmonitor.MOEX.resetBoards
 import com.example.investmentmonitor.MOEX.trueBoard
 import com.example.investmentmonitor.MOEX.tv_title
+import com.example.investmentmonitor.MOEX.tv_sub_title
 import com.example.investmentmonitor.case_sber.FragmentCase
-import com.example.investmentmonitor.case_sber.ViewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE = 100 // Код для идентификации запроса разрешений
 
     // База данных
-    private lateinit var dbHelper: DatabaseHelper
+//    private lateinit var dbHelper: DatabaseHelper
 
     private var job: Job? = null
 
@@ -69,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menuFuturesText: TextView
     private lateinit var menuFuturesIcon: ImageView
 
-    private lateinit var viewModel: ViewModel
+//    private lateinit var viewModel: ViewModel
 
     private var colorNew = Color.GRAY
     private var colorOld = Color.GRAY
@@ -116,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
         //--- Инициализировать ViewModel
 //        viewModel = ViewModelProvider(requireActivity()).get(ViewModel::class.java)
-        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
+//        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
 
         // цвета для TextView и ImageView
         colorNew = ContextCompat.getColor(this, R.color.icon_menu_tap)
@@ -135,10 +131,11 @@ class MainActivity : AppCompatActivity() {
         }
         tabLayoutMediator.attach()
         // Задаем цвет текста в вкладках
-        val normalColor = ContextCompat.getColor(this, R.color.edit_title) // цвет текста неактивной вкладки
-        val selectedColor = ContextCompat.getColor(this, R.color.icon_menu_default) // цвет текста активной вкладки
+        val normalColor = ContextCompat.getColor(this, R.color.edit_title_inactive) // цвет текста неактивной вкладки
+        val selectedColor = ContextCompat.getColor(this, R.color.edit_title_active) // цвет текста активной вкладки
 
         tabLayout.setTabTextColors(normalColor, selectedColor)
+
         // Изменение текста на вкладках по индексу
         fun updateTabText(index: Int, newText: String) {
             val tab = tabLayout.getTabAt(index)
@@ -173,6 +170,7 @@ class MainActivity : AppCompatActivity() {
             ticker: String = boardList[0],
             fragment: String = nameFragment,
             titleFragment: String = tv_title,
+            subTitleFragment: String = tv_sub_title,
             flag: Boolean = false
         ) {
             if (!flag) {
@@ -183,7 +181,11 @@ class MainActivity : AppCompatActivity() {
                     updateTabText(index, "${index + 1} ' ${boardList[index]} ' ")
                 nameFragment = fragment // фрагмент по сектору (акции, облигации)
                 tv_title = titleFragment // имя эмитента фрагмента
+                tv_sub_title = subTitleFragment // имя эмитента фрагмента
                 updateColors(nameFragment) // меняем цвет титла и иконки
+            } else {
+                tv_title = titleFragment // имя эмитента фрагмента
+                tv_sub_title = subTitleFragment // имя эмитента фрагмента
             }
             resetBoards() // сбрасываем боард
             trueBoard(ticker) // устанавливаем новый боард
@@ -203,6 +205,7 @@ class MainActivity : AppCompatActivity() {
                     .commit()
             }
         }
+
         // Слушатель для выбора вкладок
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -210,8 +213,67 @@ class MainActivity : AppCompatActivity() {
                 val text = tab.text.toString()
                 val result = regex.find(text)?.groupValues?.get(1) ?: ""
 
+                val subTitleFragment = when (result) {
+                    // Акции (основной рынок)
+                    "TQBR" -> "Т+: Акции и ДР"
+                    "SMAL" -> "Т+: Неполные лоты (акции)"
+                    "SPEQ" -> "Поставка по СК (акции)"
+                    // Паевые инвестиционные фонды (ПИФы)
+                    "TQTF" -> "Т+: ETF"
+                    "TQPI" -> "Т+: Акции ПИР"
+                    "TQIF" -> "Т+: Паи"
+                    // Облигации (государственные и корпоративные)
+                    "TQOB" -> "Т+: Гособлигации"
+                    "TQCB" -> "Т+: Облигации"
+                    "PACT" -> "Аукцион: адресные заявки"
+                    "SPOB" -> "Поставка по ОФЗ"
+                    "TQIR" -> "Т+ Облигации ПИР"
+                    "TQIY" -> "Т+: Облигации ПИР (CNY)"
+                    "TQOD" -> "Т+: Облигации (USD)"
+                    "TQOE" -> "Т+: Облигации (EUR)"
+                    "TQOY" -> "Т+: Облигации (CNY)"
+                    "TQRD" -> "Т+: Облигации Д"
+                    "TQUD" -> "Т+: Облигации Д (USD)"
+                    // Индексы
+                    "SNDX" -> "Индексы фондового рынка"
+                    "RTSI" -> "Индексы RTS"
+                    "INAV" -> "Индексы активов и ETF"
+                    "INPF" -> "Ценовой фиксинг"
+                    // Фьючерсы
+                    "RFUD" -> "Срочный рынок: фьючерсы"
+                    // Опционы
+                    "ROPD" -> "Срочный рынок: опционы"
+
+                    else -> ""
+                }
+                val titleFragment = when (result) {
+                    // Акции (основной рынок)
+                    "TQBR","SMAL","SPEQ" -> "Акции ММВБ"
+                    // Паевые инвестиционные фонды (ПИФы)
+                    "TQTF","TQPI","TQIF" -> "Фонды ММВБ"
+                    // Облигации (государственные и корпоративные)
+                    "TQOB","TQCB","PACT","SPOB","TQIR","TQIY","TQOD","TQOE","TQOY","TQRD","TQUD" -> "Облигации ММВБ"
+                    // Индексы
+                    "SNDX","RTSI","INAV","INPF" -> "Индексы ММВБ"
+                    // Фьючерсы
+                    "RFUD" -> "Фьючерсы ММВБ"
+                    // Опционы
+                    "ROPD" -> "Опционы ММВБ"
+
+                    else -> ""
+                }
+
                 // Действие при выборе вкладки
-                click(ticker = result, flag = true) // вызвать функцию дополнительного кода
+                if (titleFragment == "") { //
+                    click(ticker = result, flag = true) // вызвать функцию дополнительного кода
+                } else {
+                    click(
+                        ticker = result,
+                        titleFragment = titleFragment,
+                        subTitleFragment = subTitleFragment,
+                        flag = true
+                    )
+                }
             }
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 // Действие при отмене выбора вкладки
@@ -238,7 +300,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             nameFragment = "ActivityHome"
-            
+
             // меняем цвет титла и иконки
             updateColors(nameFragment)
         }
@@ -249,25 +311,29 @@ class MainActivity : AppCompatActivity() {
         }
         stockItem.setOnClickListener {
             boardList = mutableListOf("TQBR", "SMAL", "SPEQ") // количество страниц в viewPager2
-            click("TQBR", "FragmentStocks", "Акции") // вызвать функцию дополнительного кода            FragmentTicker() // вызываем фрагмент с новыми данными// Обновляем список в нашей программе
+            click("TQBR", "FragmentStocks", "Акции ММВБ", "Т+: Акции и ДР") // вызвать функцию дополнительного кода            FragmentTicker() // вызываем фрагмент с новыми данными// Обновляем список в нашей программе
         }
         fundItem.setOnClickListener {
             boardList = mutableListOf("TQTF", "TQPI", "TQIF") // количество страниц в viewPager2
-            click("TQTF", "FragmentFunds", "Фонды") // вызвать функцию дополнительного кода
+            click("TQTF", "FragmentFunds", "Фонды ММВБ", "Т+: ETF") // вызвать функцию дополнительного кода
         }
         bondItem.setOnClickListener {
             boardList = mutableListOf("TQOB", "TQCB", "PACT", "SPOB", "TQIR", "TQIY", "TQOD", "TQOE",
                 "TQOY", "TQRD", "TQUD") // количество страниц в viewPager2
-            click("TQOB", "FragmentBonds", "Облигации") // вызвать функцию дополнительного кода
+            click("TQOB", "FragmentBonds", "Облигации ММВБ", "Т+: Гособлигации") // вызвать функцию дополнительного кода
         }
         indexItem.setOnClickListener {
             boardList = mutableListOf("SNDX", "RTSI", "INAV", "INPF") // количество страниц в viewPager2
-            click("SNDX", "FragmentIndexes", "Индексы") // вызвать функцию дополнительного кода
+            click("SNDX", "FragmentIndexes", "Индексы ММВБ", "Индексы фондового рынка") // вызвать функцию дополнительного кода
         }
         futuresItem.setOnClickListener {
             boardList = mutableListOf("RFUD") // количество страниц в viewPager2
-            click("RFUD", "FragmentFutures", "Фьючерсы") // вызвать функцию дополнительного кода
+            click("RFUD", "FragmentFutures", "Фьючерсы ММВБ", "Срочный рынок: фьючерсы") // вызвать функцию дополнительного кода
         }
+//        optionsItem.setOnClickListener {
+//            boardList = mutableListOf("ROPD") // количество страниц в viewPager2
+//            click("ROPD", "FragmentOptions", "Опционы ММВБ", "Срочный рынок: опционы") // вызвать функцию дополнительного кода
+//        }
     }
 
     // транзакции фрагментов

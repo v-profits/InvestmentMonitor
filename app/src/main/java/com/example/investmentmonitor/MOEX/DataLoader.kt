@@ -57,16 +57,6 @@ interface ApiService {
     @GET("engines/stock/markets/bonds/boards/TQUD/securities.json")
     suspend fun getTQUD(): Response<MarketDataResponse>
 
-    // для фрагмента фьючерсов
-//    https://iss.moex.com/iss/engines/futures/markets/forts/securities.json
-    @GET("engines/futures/markets/forts/securities.json") // это фьючерсы
-    suspend fun getFutures(): Response<MarketDataResponse>
-
-    // для фрагмента опционов
-//    https://iss.moex.com/iss/engines/futures/markets/options/securities.json
-    @GET("engines/futures/markets/options/securities.json") // это опционы
-    suspend fun getOptions(): Response<MarketDataResponse>
-
     // для фрагмента индексов
 //    https://iss.moex.com/iss/engines/stock/markets/index/securities.json
     @GET("engines/stock/markets/index/boards/SNDX/securities.json") // это индексы
@@ -77,6 +67,16 @@ interface ApiService {
     suspend fun getINAV(): Response<MarketDataResponse>
     @GET("engines/stock/markets/index/boards/INPF/securities.json") // это индексы
     suspend fun getINPF(): Response<MarketDataResponse>
+
+    // для фрагмента фьючерсов
+//    https://iss.moex.com/iss/engines/futures/markets/forts/securities.json
+    @GET("engines/futures/markets/forts/securities.json") // это фьючерсы
+    suspend fun getFutures(): Response<MarketDataResponse>
+
+    // для фрагмента опционов
+//    https://iss.moex.com/iss/engines/futures/markets/options/securities.json
+    @GET("engines/futures/markets/options/securities.json") // это опционы
+    suspend fun getOptions(): Response<MarketDataResponse>
 }
 
 object RetrofitClient {
@@ -106,6 +106,8 @@ data class MarketData(
 )
 
 data class TickerResponse(
+    var id: Int? = null,
+    var position: Int? = null,
     val board: String,
     val ticker: String,
     var name: String,
@@ -113,10 +115,11 @@ data class TickerResponse(
     var currentPrice: String,
     var lastPrice: String,
     var simbolBanca: String,
+    var session: String = "",
     var flagColor: Int? = null, // Поле для цвета
     var archiveColor: Int? = null, // Поле для хранения цвета
     var visibilityTitle: Boolean = false,
     var titleItem: String = "Заголовок",
     var profit: String = "",
-    var period: String = ""
+    var period: String = "",
 )

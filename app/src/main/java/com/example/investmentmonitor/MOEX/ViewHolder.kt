@@ -1,6 +1,7 @@
 package com.example.investmentmonitor.MOEX
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -15,26 +16,28 @@ import kotlin.math.roundToInt
 class ViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
 
     private val tickerTextView: TextView = itemView.findViewById(R.id.ticker)
+    private val sessionTextView: TextView = itemView.findViewById(R.id.session)
     private val nameTextView: TextView = itemView.findViewById(R.id.name)
     private val priceMarketDataTextView: TextView = itemView.findViewById(R.id.price)
     private val valueTextView: TextView = itemView.findViewById(R.id.value)
     private val logoImageView: ImageView = itemView.findViewById(R.id.companyLogo)
-//    private val profitTextView: TextView = itemView.findViewById(R.id.profit)
+    //    private val profitTextView: TextView = itemView.findViewById(R.id.profit)
     private val titleItem: TextView = itemView.findViewById(R.id.title_item)
 
     private val ContainerItem: LinearLayout = itemView.findViewById(R.id.container_item)
     private val ContainerTitleItem: LinearLayout = itemView.findViewById(R.id.container_title_item)
 
     fun bind(ticker: TickerResponse) {
+
         if (ticker.board in listOf("TQOB", "TQCB", "PACT", "SPOB", "TQIR", "TQIY", "TQOD", "TQOE", "TQOY", "TQRD", "TQUD")) {
             tickerTextView.text = ticker.name
             nameTextView.text = "${ticker.profit}%  -  ${bondsPeriod(ticker.period)}" // для облигаций, купонный процент и дата погашения
-            titleItem.text = ticker.titleItem
         } else {
             tickerTextView.text = ticker.ticker
             nameTextView.text = ticker.name
-            titleItem.text = ticker.titleItem
         }
+        titleItem.text = ticker.titleItem
+        sessionTextView.text = ticker.session
 
         if (ticker.visibilityTitle) {
             ContainerItem.visibility = View.GONE
@@ -58,18 +61,19 @@ class ViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder
                 "USD" -> "$"
                 "EUR" -> "€"
                 "CNY" -> "¥"
-                else -> "₽"
+                else -> ""
             }
         }
 
 
-//        if (result1 != null && result2 != null) {
-        if (result1 != null && result2 != null && result1 != 0.0) {
+        if (result1 != null && result2 != null) {
+//        if (result1 != null && result2 != null && result1 != 0.0 && result2 != 0.0) {
 
             // Подсчет количества знаков после запятой
             val decimalPlaces = ticker.decimals
 
-            var result = result2 - result1
+//            var result = result2 - result1
+            var result = if (result1 == 0.0 || result2 == 0.0) 0.0 else (result2 - result1)
 
             // Округляем результат до нужного количества знаков после запятой, убирая лишние нули
             var digits = 1
@@ -80,7 +84,10 @@ class ViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder
             result = numInt.toDouble()/digits
 
             // Процентное изменение
-            var percent = (result2 - result1) / result1 * 100
+//            var percent = (result2 - result1) / result1 * 100
+            var percent = if (result1 == 0.0 || result2 == 0.0) 0.0 else (result2 - result1) / result1 * 100.0
+
+//            Log.e("aaa", "result1 = $result1, result2 = $result2, percent = $percent")
 
             numDouble = percent*100
             try {
@@ -137,7 +144,7 @@ class ViewHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder
         }
 
         // Получаем идентификатор ресурса на основе имени тикера
-        val tickerName = ticker.ticker.toLowerCase()
+        val tickerName = ticker.ticker.lowercase()
         val xmlResId = context.resources.getIdentifier(tickerName, "drawable", context.packageName)
         val xmlResIdDefault = when (ticker.board) {
             "TQTF" -> // мои фонды

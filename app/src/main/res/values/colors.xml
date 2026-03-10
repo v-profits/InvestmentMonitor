@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
 
 
-<!--    цвета для флагов компаний-->
+    <!--    цвета для флагов компаний-->
     <color name="flag1">#FF6E3C</color>
     <color name="flag2">#FFAB00</color>
     <color name="flag3">#00C853</color>
@@ -24,13 +24,10 @@
     <color name="color1_">#FF3C00</color>
     <color name="color3_">#16C51D</color>
 
-
-
-
+    <!--    цвета для иконок-->
+<!--    <color name="icon">#5E6A7E</color>-->
 
     <color name="zero">#00FFFFFF</color>
-
-
 
     <color name="black">#000000</color>
     <color name="black_blue">#2C3D57</color>
@@ -38,16 +35,16 @@
     <color name="gray">#737373</color>
     <color name="green">#009F88</color>
     <color name="red">#F13F3F</color>
-    <color name="ticker">#454C63</color>
+    <color name="edit_title_active">#454C63</color>
     <color name="price">#4E556E</color>
     <color name="line_item">#F4EFEF</color>
     <color name="window">#FFFFFF</color>
-<!--    <color name="menu_default">#9D9393</color>-->
-    <color name="icon_menu_default">#85807E</color>
+    <!--    <color name="menu_default">#9D9393</color>-->
+    <color name="icon_menu_default">#5E6A7E</color>
     <color name="icon_menu_tap">#2F6FA8</color>
     <color name="icon_fragment">#85807E</color>
     <color name="title_fragment">#85807E</color>
-    <color name="edit_title">#31000000</color>
+    <color name="edit_title_inactive">#31000000</color>
     <color name="fon_title">#2FCCC5C5</color>
 
 </resources>

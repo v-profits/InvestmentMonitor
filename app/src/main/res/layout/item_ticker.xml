@@ -14,7 +14,8 @@
             android:id="@+id/container_title_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:background="#FAFAFA"
+            android:visibility="visible"
             android:orientation="vertical">
 
             <LinearLayout
@@ -22,8 +23,8 @@
                 android:layout_height="match_parent"
                 android:paddingStart="48dp"
                 android:paddingEnd="4dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
                 android:orientation="horizontal">
 
                 <View
@@ -35,23 +36,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="0dp"
-                    android:layout_marginTop="0dp"
-                    app:cardBackgroundColor="@color/fon_title"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="0dp"
+                    app:cardBackgroundColor="@color/window"
                     app:cardUseCompatPadding="true">
+                    <!--                    app:cardBackgroundColor="#C8CBCE"-->
 
                     <TextView
                         android:id="@+id/title_item"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/MyFontStyle"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp"
                         android:paddingStart="32dp"
                         android:paddingEnd="32dp"
                         android:text="Заголовок"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textColor="@color/black_blue"
                         android:gravity="end" />
 
@@ -117,8 +119,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_margin="1dp"
                     android:orientation="horizontal">
 
@@ -129,8 +130,17 @@
                         android:layout_height="match_parent"
                         android:maxLines="1"
                         android:text="TextView"
-                        android:textColor="@color/ticker"
+                        android:textColor="@color/edit_title_active"
                         android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/session"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingStart="4dp"
+                        android:text="⚫"
+                        android:textSize="6sp" />
 
                     <TextView
                         android:id="@+id/price"
@@ -147,8 +157,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:layout_margin="1dp"
                     android:orientation="horizontal">
 
@@ -158,11 +167,11 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:maxLines="1"
                         android:paddingEnd="8dp"
                         android:text="TextView"
                         android:textColor="@color/gray"
                         android:textSize="14sp" />
+<!--                    android:maxLines="2"-->
 
                     <TextView
                         android:id="@+id/value"

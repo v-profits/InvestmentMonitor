@@ -74,10 +74,12 @@ class Adapter(
                 } else {
                     backupTicker[position].flagColor = null
                 }
-                PreferencesManager.getInstance(context).setTickerResponse(nameBoard(), backupTicker)
 
-                // Обновляем и сохраняем список
-                updateTicker()
+                // Сохраняем в базу новое значение flagColor
+                TickerDatabaseHelper(context).updateFlagColor(ticker.board, ticker.ticker, ticker.flagColor)
+
+                // Обновляем визуал
+                notifyItemChanged(position)
             }
         }
     }
@@ -87,13 +89,6 @@ class Adapter(
     // обновляем все изменения в данных тиккеров и итемах
     @SuppressLint("NotifyDataSetChanged")
     fun updateTicker(check: Boolean = false) {
-
-        //--- обнуляем память тиккеров
-        if (isResetTickers) {
-            backupTicker.clear()
-            PreferencesManager.getInstance(context).setTickerResponse(nameBoard(), backupTicker)
-            return
-        }
 
         // обновляем данные цен по тиккерам (акциям)
         fun updataPrice() {
@@ -148,14 +143,14 @@ class Adapter(
                             backupTicker[j].decimals = moexTicker[i].decimals
                         if (backupTicker[j].simbolBanca != moexTicker[i].simbolBanca)
                             backupTicker[j].simbolBanca = moexTicker[i].simbolBanca
+                        if (backupTicker[j].session != moexTicker[i].session)
+                            backupTicker[j].session = moexTicker[i].session
                         if (nameBoard() in listOf("TQOB", "TQCB", "PACT", "SPOB", "TQIR", "TQIY", "TQOD", "TQOE", "TQOY", "TQRD", "TQUD")) { // облигации
                             if (backupTicker[j].profit != moexTicker[i].profit)
                                 backupTicker[j].profit = moexTicker[i].profit
                             if (backupTicker[j].period != moexTicker[i].period)
                                 backupTicker[j].period = moexTicker[i].period
                         }
-
-
 
                         flag = true
                         break
@@ -164,6 +159,10 @@ class Adapter(
                     backupTicker.add(backupTicker.size, moexTicker[i])
                 }
             }
+
+            // удалить все записи из таблицы базы данных, соответствующие board, но отсутствующие в списке backupTicker
+            val dbHelper = TickerDatabaseHelper(context)
+            dbHelper.deleteMissingTickers(nameBoard(), backupTicker)
         }
 
         updataPrice() // обновляем данные цен по акциям

@@ -264,7 +264,7 @@ fun DatabaseHelper.updateCategoryAndTickerInAssets() {
         """)
         db.setTransactionSuccessful()
     } catch (e: Exception) {
-        Log.e("DatabaseUpdate", "Ошибка при обновлении категорий и тикеров в таблице Assets: ${e.message}")
+        Log.e("aaa", "Ошибка при обновлении категорий и тикеров в таблице Assets: ${e.message}")
     } finally {
         db.endTransaction()
     }
